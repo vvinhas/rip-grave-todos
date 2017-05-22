@@ -1,30 +1,35 @@
-const express = require('express')
 const uuid = require('uuid')
 
-const make = (store) => {
-  const router = express.Router()
-
+const make = (router, store) => {
+  // Get all todos
   router.get('/all', (req, res) => {
-    res.json(store.get('data'))
+    res.json(store.data)
   })
-
+  // Save a todo
   router.post('/', (req, res) => {
-    const todos = store.get('data')
-    todos.push({
-      _id: uuid.v4(),
-      text: req.body.text,
-      completed: false
-    })
-    store.set('data', todos)
+    const { user_id, text } = req.body
+    store.data = [
+      ...store.data,
+      {
+        _id: uuid.v4(),
+        text: req.body.text,
+        completed: false
+      }
+    ]
     res.status(200).end()
   })
 
   return router
 }
 
-const init = (store, fake) => {
-  store.set('data', [])
-  return store
+const init = (fake) => {
+  return {
+    data: [{
+      _id: 1,
+      user_id: 1,
+      text: 'Testing RIP'
+    }]
+  }
 }
 
 module.exports = {
