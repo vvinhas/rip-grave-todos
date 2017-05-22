@@ -1,2 +1,2 @@
-# rip-grave-todos
-A Todo extension for RIP API
+# rip-grave-todo
+A Todo API for RIP
