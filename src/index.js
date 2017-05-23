@@ -3,19 +3,21 @@ const uuid = require('uuid')
 const make = (router, store) => {
   // Get all todos
   router.get('/all', (req, res) => {
-    res.json(store.data)
+    res.json(store.getDeep('todos', 'data'))
   })
   // Save a todo
   router.post('/', (req, res) => {
-    const { user_id, text } = req.body
-    store.data = [
-      ...store.data,
+    const data = store.getDeep('todos', 'data')
+    const { author, text } = req.body
+    store.setDeep('todos', 'data', [
+      ...data,
       {
         _id: uuid.v4(),
-        text: req.body.text,
-        completed: false
+        completed: false,
+        text,
+        author
       }
-    ]
+    ])
     res.status(200).end()
   })
 
@@ -24,11 +26,7 @@ const make = (router, store) => {
 
 const init = (fake) => {
   return {
-    data: [{
-      _id: 1,
-      user_id: 1,
-      text: 'Testing RIP'
-    }]
+    data: []
   }
 }
 
