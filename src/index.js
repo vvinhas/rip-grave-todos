@@ -1,5 +1,6 @@
 const uuid = require('uuid')
 const faker = require('faker')
+const { Map } = require('immutable')
 
 const generateFakeTodo = () => ({
   _id: faker.random.uuid(),
@@ -21,21 +22,18 @@ const init = (fake) => {
 const make = (router, store) => {
   // Get all todos
   router.get('/all', (req, res) => {
-    res.json(store.getDeep('todos', 'data'))
+    res.json(store.getState().get('data').toJSON())
   })
   // Save a todo
   router.post('/', (req, res) => {
-    const data = store.getDeep('todos', 'data')
     const { author, text } = req.body
-    store.setDeep('todos', 'data', [
-      ...data,
-      {
-        _id: uuid.v4(),
-        completed: false,
-        text,
-        author
-      }
-    ])
+    const newState = store.getState().update('data', todos => todos.push(Map({
+      _id: uuid.v4(),
+      completed: false,
+      author,
+      text
+    })))
+    store.updateState(newState)
     res.status(200).end()
   })
 
