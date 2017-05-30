@@ -31,14 +31,13 @@ const init = (fake) => {
 const make = (router, store) => {
   // Get all todos
   router.get('/all', (req, res) => {
-    const todos = store.getState()
-      .get('data')
+    const todos = store.output().get('data')
     res.json(todos ? todos.toJSON() : [])
   })
   // Get a single todo
   router.get('/:id', (req, res) => {
-    const todo = store.getState()
-      .get('data')  
+    const todo = store.output()
+      .get('data')
       .find(todo => sameId(todo, req.params.id))
     res.json(todo ? todo.toJSON() : {})
   })
@@ -47,7 +46,7 @@ const make = (router, store) => {
     const { author, text } = req.body
     const newState = store.getState()
       .update('data', todos => todos.push(createTodo(author, text)))
-    store.updateState(newState)
+    store.setState(newState)
     res.status(200).end()
   })
   // Toggle a todo
@@ -58,7 +57,7 @@ const make = (router, store) => {
           toggleTodo(todo) :
           todo
       }))
-    store.updateState(newState)
+    store.setState(newState)
     res.status(200).end()
   })
   // Delete a todo
